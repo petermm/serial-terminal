@@ -1,15 +1,18 @@
-import eslint from 'vite-plugin-eslint'
-import { VitePWA } from 'vite-plugin-pwa'
-import webmanifest from './src/manifest.json';
+// import { VitePWA } from "vite-plugin-pwa";
+// import webmanifest from "./src/manifest.json";
 
 export default {
-  base: './',
+  base: "./",
+  server: {
+    hmr: {
+      overlay: false,
+    },
+  },
   plugins: [
-    eslint(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
-      manifest: webmanifest,
-    })
-  ]
-}
+    // VitePWA({
+    //   registerType: "autoUpdate",
+    //   injectRegister: "auto",
+    //   manifest: webmanifest,
+    // }),
+  ],
+};
