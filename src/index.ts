@@ -393,9 +393,20 @@ async function disconnectFromPort(): Promise<void> {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // TODO: add reopen similar to ninjaterm:
+  // https://github.com/gbmhunter/NinjaTerm/blob/76f7f2cc32093db9abc3ad2a3a6e8b9737c3e506/src/model/App.tsx#L236
   const terminalElement = document.getElementById("terminal");
   if (terminalElement) {
     term.open(terminalElement);
+
+    term.writeln("Welcome!");
+    term.writeln("");
+    term.writeln(
+      "This provides easy serial connection to your device, if you haven't flashed your device with AtomVM yet, you can do so here:",
+    );
+    term.writeln("");
+    term.writeln("-> https://petermm.github.io/atomvm-web-tools/ <-");
+
     fitAddon.fit();
 
     window.addEventListener("resize", () => {
@@ -428,6 +439,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     await port.setSignals({ dataTerminalReady: true });
 
+    // or https://github.com/esphome/esp-web-tools/blob/ec35b6aa693146432dad48b99b631b45bcae69b3/src/components/ewt-console.ts#L143
     // other resets here: https://github.com/espressif/esptool-js/blob/7ed57e18642088675bec01b8e34ba196d5e135af/src/reset.ts#L31
   }
 
