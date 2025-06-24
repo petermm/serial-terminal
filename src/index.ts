@@ -399,13 +399,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (terminalElement) {
     term.open(terminalElement);
 
-    term.writeln("Welcome!");
+    term.writeln("");
+    term.writeln(" Welcome!");
     term.writeln("");
     term.writeln(
-      "This provides easy serial connection to your device, if you haven't flashed your device with AtomVM yet, you can do so here:",
+      " This provides easy serial connection to your device, if you haven't flashed your device with AtomVM yet, you can do so here:",
     );
     term.writeln("");
-    term.writeln("-> https://petermm.github.io/atomvm-web-tools/ <-");
+    term.writeln(" -> https://petermm.github.io/atomvm_flasher/ <-");
+
+    term.writeln("");
+    term.writeln(" NB, Serial in browser - only works on Chrome and Edge.");
+
+    term.writeln("");
+    term.writeln(
+      " \u001b]1337;File=size=153;inline=1:iVBORw0KGgoAAAANSUhEUgAAABAAAAAPBAMAAAAfXVIcAAAAD1BMVEV63/39//w5TVIZFhXDjXbHNiz1AAAARUlEQVR4nJTJUQ3AIAwG4aMzsBYD9FdQEfjXtJBiYPf0JYeHJKUTC8CShYNjaMwas4xoJNHrgKdo7H0x3ovTP3wBAAD//9u1Bcrd6KY0AAAAAElFTkSuQmCC\u0007\n",
+    );
 
     fitAddon.fit();
 
