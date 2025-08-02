@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Terminal } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
-import { WebLinksAddon } from "@xterm/addon-web-links";
-import { ImageAddon, IImageAddonOptions } from "@xterm/addon-image";
-import "@xterm/xterm/css/xterm.css";
+import {Terminal} from '@xterm/xterm';
+import {FitAddon} from '@xterm/addon-fit';
+import {WebLinksAddon} from '@xterm/addon-web-links';
+import {ImageAddon, IImageAddonOptions} from '@xterm/addon-image';
+import '@xterm/xterm/css/xterm.css';
 import {
   serial as polyfill,
   SerialPort as SerialPortPolyfill,
-} from "web-serial-polyfill";
+} from 'web-serial-polyfill';
 
 // customize as needed (showing addon defaults)
 const customSettings: IImageAddonOptions = {
@@ -63,7 +63,7 @@ let port: SerialPort | SerialPortPolyfill | undefined;
 let reader: ReadableStreamDefaultReader | ReadableStreamBYOBReader | undefined;
 
 const urlParams = new URLSearchParams(window.location.search);
-const usePolyfill = urlParams.has("polyfill");
+const usePolyfill = urlParams.has('polyfill');
 const bufferSize = 8 * 1024; // 8kB
 
 const term = new Terminal({
@@ -80,7 +80,7 @@ term.loadAddon(imageAddon);
 term.loadAddon(new WebLinksAddon());
 
 const encoder = new TextEncoder();
-let toFlush = "";
+let toFlush = '';
 term.onData((data) => {
   if (echoCheckbox.checked) {
     term.write(data);
@@ -95,10 +95,10 @@ term.onData((data) => {
 
   if (flushOnEnterCheckbox.checked) {
     toFlush += data;
-    if (data === "\r") {
+    if (data === '\r') {
       writer.write(encoder.encode(toFlush));
       writer.releaseLock();
-      toFlush = "";
+      toFlush = '';
     }
   } else {
     writer.write(encoder.encode(data));
@@ -115,11 +115,11 @@ term.onData((data) => {
  * @return {PortOption}
  */
 function findPortOption(
-  port: SerialPort | SerialPortPolyfill,
+    port: SerialPort | SerialPortPolyfill,
 ): PortOption | null {
   for (let i = 0; i < portSelector.options.length; ++i) {
     const option = portSelector.options[i];
-    if (option.value === "prompt") {
+    if (option.value === 'prompt') {
       continue;
     }
     const portOption = option as PortOption;
@@ -138,7 +138,7 @@ function findPortOption(
  * @return {PortOption}
  */
 function addNewPort(port: SerialPort | SerialPortPolyfill): PortOption {
-  const portOption = document.createElement("option") as PortOption;
+  const portOption = document.createElement('option') as PortOption;
   portOption.textContent = `Port ${portCounter++}`;
   portOption.port = port;
   portSelector.appendChild(portOption);
@@ -166,11 +166,11 @@ function maybeAddNewPort(port: SerialPort | SerialPortPolyfill): PortOption {
  */
 function downloadTerminalContents(): void {
   if (!term) {
-    throw new Error("no terminal instance found");
+    throw new Error('no terminal instance found');
   }
 
   if (term.rows === 0) {
-    console.log("No output yet");
+    console.log('No output yet');
     return;
   }
 
@@ -178,11 +178,11 @@ function downloadTerminalContents(): void {
   const contents = term.getSelection();
   term.clearSelection();
   const linkContent = URL.createObjectURL(
-    new Blob([new TextEncoder().encode(contents).buffer], {
-      type: "text/plain",
-    }),
+      new Blob([new TextEncoder().encode(contents).buffer], {
+        type: 'text/plain',
+      }),
   );
-  const fauxLink = document.createElement("a");
+  const fauxLink = document.createElement('a');
   fauxLink.download = `terminal_content_${new Date().getTime()}.txt`;
   fauxLink.href = linkContent;
   fauxLink.click();
@@ -193,11 +193,11 @@ function downloadTerminalContents(): void {
  */
 function clearTerminalContents(): void {
   if (!term) {
-    throw new Error("no terminal instance found");
+    throw new Error('no terminal instance found');
   }
 
   if (term.rows === 0) {
-    console.log("No output yet");
+    console.log('No output yet');
     return;
   }
 
@@ -209,7 +209,7 @@ function clearTerminalContents(): void {
  * user is prompted for one.
  */
 async function getSelectedPort(): Promise<void> {
-  if (portSelector.value == "prompt") {
+  if (portSelector.value == 'prompt') {
     try {
       const serial = usePolyfill ? polyfill : navigator.serial;
       port = await serial.requestPort({});
@@ -228,7 +228,7 @@ async function getSelectedPort(): Promise<void> {
  * @return {number} the currently selected baud rate
  */
 function getSelectedBaudRate(): number {
-  if (baudRateSelector.value == "custom") {
+  if (baudRateSelector.value == 'custom') {
     return Number.parseInt(customBaudRateInput.value);
   }
   return Number.parseInt(baudRateSelector.value);
@@ -238,9 +238,9 @@ function getSelectedBaudRate(): number {
  * Resets the UI back to the disconnected state.
  */
 function markDisconnected(): void {
-  term.writeln("<DISCONNECTED>");
+  term.writeln('<DISCONNECTED>');
   portSelector.disabled = false;
-  connectButton.textContent = "Connect";
+  connectButton.textContent = 'Connect';
   connectButton.disabled = false;
   baudRateSelector.disabled = false;
   customBaudRateInput.disabled = false;
@@ -265,9 +265,9 @@ async function connectToPort(): Promise<void> {
     dataBits: Number.parseInt(dataBitsSelector.value),
     parity: paritySelector.value as ParityType,
     stopBits: Number.parseInt(stopBitsSelector.value),
-    flowControl: flowControlCheckbox.checked
-      ? <const>"hardware"
-      : <const>"none",
+    flowControl: flowControlCheckbox.checked ?
+      <const>'hardware' :
+      <const>'none',
     bufferSize,
 
     // Prior to Chrome 86 these names were used.
@@ -279,7 +279,7 @@ async function connectToPort(): Promise<void> {
   console.log(options);
 
   portSelector.disabled = true;
-  connectButton.textContent = "Connecting...";
+  connectButton.textContent = 'Connecting...';
   connectButton.disabled = true;
   baudRateSelector.disabled = true;
   customBaudRateInput.disabled = true;
@@ -290,8 +290,8 @@ async function connectToPort(): Promise<void> {
 
   try {
     await port.open(options);
-    term.writeln("<CONNECTED>");
-    connectButton.textContent = "Disconnect";
+    term.writeln('<CONNECTED>');
+    connectButton.textContent = 'Disconnect';
     connectButton.disabled = false;
   } catch (e) {
     console.error(e);
@@ -305,23 +305,23 @@ async function connectToPort(): Promise<void> {
   while (port && port.readable) {
     try {
       try {
-        reader = port.readable.getReader({ mode: "byob" });
+        reader = port.readable.getReader({mode: 'byob'});
       } catch {
         reader = port.readable.getReader();
       }
 
       let buffer = null;
       for (;;) {
-        const { value, done } = await (async () => {
+        const {value, done} = await (async () => {
           if (reader instanceof ReadableStreamBYOBReader) {
             if (!buffer) {
               buffer = new ArrayBuffer(bufferSize);
             }
-            const { value, done } = await reader.read(
-              new Uint8Array(buffer, 0, bufferSize),
+            const {value, done} = await reader.read(
+                new Uint8Array(buffer, 0, bufferSize),
             );
             buffer = value?.buffer;
-            return { value, done };
+            return {value, done};
           } else {
             return await reader.read();
           }
@@ -392,79 +392,86 @@ async function disconnectFromPort(): Promise<void> {
   markDisconnected();
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // TODO: add reopen similar to ninjaterm:
   // https://github.com/gbmhunter/NinjaTerm/blob/76f7f2cc32093db9abc3ad2a3a6e8b9737c3e506/src/model/App.tsx#L236
-  const terminalElement = document.getElementById("terminal");
+  const terminalElement = document.getElementById('terminal');
   if (terminalElement) {
     term.open(terminalElement);
 
-    term.writeln("");
-    term.writeln(" Welcome!");
-    term.writeln("");
+    term.writeln('');
+    term.writeln(' Welcome!');
+    term.writeln('');
     term.writeln(
-      " This provides easy serial connection to your device, if you haven't flashed your device with AtomVM yet, you can do so here:",
+        ' This provides easy serial connection to your device, if you ' +
+        'haven\'t flashed your device with AtomVM yet, you can do so here:',
     );
-    term.writeln("");
-    term.writeln(" -> https://petermm.github.io/atomvm_flasher/ <-");
+    term.writeln('');
+    term.writeln(' -> https://petermm.github.io/atomvm_flasher/ <-');
 
-    term.writeln("");
-    term.writeln(" NB, Serial in browser - only works on Chrome and Edge.");
+    term.writeln('');
+    term.writeln(' NB, Serial in browser - only works on Chrome and Edge.');
 
-    term.writeln("");
+    term.writeln('');
     term.writeln(
-      " \u001b]1337;File=size=153;inline=1:iVBORw0KGgoAAAANSUhEUgAAABAAAAAPBAMAAAAfXVIcAAAAD1BMVEV63/39//w5TVIZFhXDjXbHNiz1AAAARUlEQVR4nJTJUQ3AIAwG4aMzsBYD9FdQEfjXtJBiYPf0JYeHJKUTC8CShYNjaMwas4xoJNHrgKdo7H0x3ovTP3wBAAD//9u1Bcrd6KY0AAAAAElFTkSuQmCC\u0007\n",
+        ' \u001b]1337;File=size=153;inline=1:iVBORw0KGgoAAAANSUhEUgAAABAAAAA' +
+        'PBAM' +
+        'AAAAfXVIcAAAAD1BMVEV63/39//w5TVIZFhXDjXbHNiz1AAAARUlEQVR4nJTJ' +
+        'UQ3A' +
+        'IAwG4aMzsBYD9FdQEfjXtJBiYPf0JYeHJKUTC8CShYNjaMwas4xoJNHrgKdo' +
+        '7H' +
+        '0x3ovTP3wBAAD//9u1Bcrd6KY0AAAAAElFTkSuQmCC\u0007\n',
     );
 
     fitAddon.fit();
 
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       fitAddon.fit();
     });
   }
 
   const downloadOutput = document.getElementById(
-    "download",
+      'download',
   ) as HTMLSelectElement;
-  downloadOutput.addEventListener("click", downloadTerminalContents);
+  downloadOutput.addEventListener('click', downloadTerminalContents);
 
   /**
    * Clear the terminal's contents.
    */
   async function resetEspCall(): Promise<void> {
     if (!term) {
-      throw new Error("no terminal instance found");
+      throw new Error('no terminal instance found');
     }
 
     if (!port) {
-      term.writeln("<Not connected!>");
+      term.writeln('<Not connected!>');
       return;
     }
 
-    term.writeln("<Resetting>");
+    term.writeln('<Resetting>');
 
     // https://github.com/espressif/esptool-js/blob/7ed57e18642088675bec01b8e34ba196d5e135af/examples/typescript/src/index.ts#L124
-    await port.setSignals({ dataTerminalReady: false });
+    await port.setSignals({dataTerminalReady: false});
     await new Promise((resolve) => setTimeout(resolve, 100));
-    await port.setSignals({ dataTerminalReady: true });
+    await port.setSignals({dataTerminalReady: true});
 
     // or https://github.com/esphome/esp-web-tools/blob/ec35b6aa693146432dad48b99b631b45bcae69b3/src/components/ewt-console.ts#L143
     // other resets here: https://github.com/espressif/esptool-js/blob/7ed57e18642088675bec01b8e34ba196d5e135af/src/reset.ts#L31
   }
 
-  const resetEsp = document.getElementById("reset_esp") as HTMLSelectElement;
-  resetEsp.addEventListener("reset_esp", resetEspCall);
-  resetEsp.addEventListener("click", () => {
+  const resetEsp = document.getElementById('reset_esp') as HTMLSelectElement;
+  resetEsp.addEventListener('reset_esp', resetEspCall);
+  resetEsp.addEventListener('click', () => {
     resetEspCall();
   });
 
-  const clearOutput = document.getElementById("clear") as HTMLSelectElement;
-  clearOutput.addEventListener("click", clearTerminalContents);
+  const clearOutput = document.getElementById('clear') as HTMLSelectElement;
+  clearOutput.addEventListener('click', clearTerminalContents);
 
-  portSelector = document.getElementById("ports") as HTMLSelectElement;
+  portSelector = document.getElementById('ports') as HTMLSelectElement;
 
-  connectButton = document.getElementById("connect") as HTMLButtonElement;
-  connectButton.addEventListener("click", () => {
+  connectButton = document.getElementById('connect') as HTMLButtonElement;
+  connectButton.addEventListener('click', () => {
     if (port) {
       disconnectFromPort();
     } else {
@@ -472,9 +479,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  baudRateSelector = document.getElementById("baudrate") as HTMLSelectElement;
-  baudRateSelector.addEventListener("input", () => {
-    if (baudRateSelector.value == "custom") {
+  baudRateSelector = document.getElementById('baudrate') as HTMLSelectElement;
+  baudRateSelector.addEventListener('input', () => {
+    if (baudRateSelector.value == 'custom') {
       customBaudRateInput.hidden = false;
     } else {
       customBaudRateInput.hidden = true;
@@ -482,27 +489,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   customBaudRateInput = document.getElementById(
-    "custom_baudrate",
+      'custom_baudrate',
   ) as HTMLInputElement;
-  dataBitsSelector = document.getElementById("databits") as HTMLSelectElement;
-  paritySelector = document.getElementById("parity") as HTMLSelectElement;
-  stopBitsSelector = document.getElementById("stopbits") as HTMLSelectElement;
-  flowControlCheckbox = document.getElementById("rtscts") as HTMLInputElement;
-  echoCheckbox = document.getElementById("echo") as HTMLInputElement;
+  dataBitsSelector = document.getElementById('databits') as HTMLSelectElement;
+  paritySelector = document.getElementById('parity') as HTMLSelectElement;
+  stopBitsSelector = document.getElementById('stopbits') as HTMLSelectElement;
+  flowControlCheckbox = document.getElementById('rtscts') as HTMLInputElement;
+  echoCheckbox = document.getElementById('echo') as HTMLInputElement;
   flushOnEnterCheckbox = document.getElementById(
-    "enter_flush",
+      'enter_flush',
   ) as HTMLInputElement;
   autoconnectCheckbox = document.getElementById(
-    "autoconnect",
+      'autoconnect',
   ) as HTMLInputElement;
 
   const convertEolCheckbox = document.getElementById(
-    "convert_eol",
+      'convert_eol',
   ) as HTMLInputElement;
   const convertEolCheckboxHandler = () => {
     term.options.convertEol = convertEolCheckbox.checked;
   };
-  convertEolCheckbox.addEventListener("change", convertEolCheckboxHandler);
+  convertEolCheckbox.addEventListener('change', convertEolCheckboxHandler);
   convertEolCheckboxHandler();
 
   // const polyfillSwitcher =
@@ -521,19 +528,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // These events are not supported by the polyfill.
   // https://github.com/google/web-serial-polyfill/issues/20
-  //if (!usePolyfill) {
-  navigator.serial.addEventListener("connect", (event) => {
+  // if (!usePolyfill) {
+  navigator.serial.addEventListener('connect', (event) => {
     const portOption = addNewPort(event.target as SerialPort);
     if (autoconnectCheckbox.checked) {
       portOption.selected = true;
       connectToPort();
     }
   });
-  navigator.serial.addEventListener("disconnect", (event) => {
+  navigator.serial.addEventListener('disconnect', (event) => {
     const portOption = findPortOption(event.target as SerialPort);
     if (portOption) {
       portOption.remove();
     }
   });
-  //}
+  // }
 });
